@@ -35,14 +35,16 @@ class Node(AbstractNode):
       bbox_labels = inputs["bbox_labels"]
       bbox_scores = inputs["bbox_scores"]
       ids = inputs["obj_attrs"]['ids']
+      heights = inputs["obj_attrs"]['heights']
       
       self.logger.info(ids)
       
       self.logger.info(f"num bboxes={len(bboxes)}")
       for i, bbox in enumerate(bboxes):
-            id, label, score = ids[i], bbox_labels[i], bbox_scores[i]
+            id, label, score, height = ids[i], bbox_labels[i], bbox_scores[i], heights[i]
             self.logger.info(f"bbox {i}:")
             self.logger.info(f"  id={id}, label={label}, score={score:0.2f}")
             self.logger.info(f"  coords={bbox}")
+            self.logger.info(f"  height={height}")
 
       return {}  # no outputs

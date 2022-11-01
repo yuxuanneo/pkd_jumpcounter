@@ -7,3 +7,5 @@ input: ["btm_midpoint", "obj_attrs"]
 # Output `obj_attrs` for visualization with `draw.tag` node and `custom_key` for
 # use with other custom nodes. Replace as required.
 output: ["obj_attrs"]
+
+threshold: 5

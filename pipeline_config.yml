@@ -5,7 +5,7 @@ nodes:
     detect: ["person"]
 - dabble.bbox_to_btm_midpoint
 - dabble.zone_count:
-    resolution: [720, 480]
+    resolution: [1920, 1080]
     zones: [
       [[0.35,0], [0.65,0], [0.65,1], [0.35,1]],
     ]
@@ -15,15 +15,16 @@ nodes:
 #     ]
 - dabble.tracking
 - custom_nodes.dabble.timer
-- custom_nodes.dabble.jump
+- custom_nodes.dabble.jump:
+    threshold: 5
 - custom_nodes.dabble.debug
 - dabble.statistics:
     maximum: obj_attrs["ids"]
 - dabble.fps
 - draw.bbox
-# - draw.zones
+- draw.zones
 - draw.tag:
-    show: ["ids", "times"]
+    show: ["ids", "times", "jumps", "directions"]
 - draw.legend:
     show: ["fps", "cum_max", "cum_min", "cum_avg", "zone_count"]
 - output.screen
