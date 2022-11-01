@@ -1,0 +1,5 @@
+# Mandatory configs
+input: ["all"]
+output: ["none"]
+
+# No optional configs

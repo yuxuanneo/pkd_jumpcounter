@@ -1,0 +1,28 @@
+nodes:
+- input.visual:
+    source: 'demo/jumping_jacks.mp4'
+- model.yolo:
+    detect: ["person"]
+- dabble.bbox_to_btm_midpoint
+- dabble.zone_count:
+    resolution: [720, 480]
+    zones: [
+      [[0.35,0], [0.65,0], [0.65,1], [0.35,1]],
+    ]
+# - custom_nodes.dabble.filter_bbox:
+#     zones: [
+#       [[0.35,0], [0.65,0], [0.65,1], [0.35,1]],
+#     ]
+- dabble.tracking
+- custom_nodes.dabble.timer
+- custom_nodes.dabble.debug
+- dabble.statistics:
+    maximum: obj_attrs["ids"]
+- dabble.fps
+- draw.bbox
+# - draw.zones
+- draw.tag:
+    show: ["ids", "times"]
+- draw.legend:
+    show: ["fps", "cum_max", "cum_min", "cum_avg", "zone_count"]
+- output.screen
