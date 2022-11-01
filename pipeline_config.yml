@@ -15,6 +15,7 @@ nodes:
 #     ]
 - dabble.tracking
 - custom_nodes.dabble.timer
+- custom_nodes.dabble.jump
 - custom_nodes.dabble.debug
 - dabble.statistics:
     maximum: obj_attrs["ids"]

@@ -16,7 +16,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.track_ids = {}
+        self.tracked_ids = {}
         
         # initialize/load any configs and models here
         # configs can be called by self.<config_name> e.g. self.filepath
@@ -32,3 +32,25 @@ class Node(AbstractNode):
             outputs (dict): Dictionary with keys "__".
         """
         
+        ids = inputs["obj_attrs"]["ids"]
+        times = inputs["obj_attrs"]["times"]
+        btm_midpoints = inputs["btm_midpoint"]
+        
+        # for new object, record the initial btm midpoint as reference
+        for i, time in enumerate(times):
+            if time == 0:
+                 self.tracked_ids[ids[i]] = {"stand_height": btm_midpoints[i], 
+                                             "jump_count": 0} 
+            else:
+                stand_height = self.tracked_ids[ids[i]]["stand_height"]
+                curr_height = btm_midpoints[i]
+                if (curr_height[1] - stand_height[1])/stand_height[1] >= 0.05:
+                    self.tracked_ids[ids[i]]["jump_count"] += 1
+            
+        jumps_list = []        
+        for current_id in ids:
+            jumps_list.append(self.tracked_ids[current_id]["jump_count"])
+        
+        inputs["obj_attrs"]["jumps"] = jumps_list
+        
+        return inputs["obj_attrs"]
