@@ -1,6 +1,5 @@
-"""
-Node template for creating custom nodes.
-"""
+"""Counts the number of jumps made by detected objects"""
+
 import numpy as np
 from typing import Any, Dict
 
@@ -8,37 +7,53 @@ from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):
-    """This is a template class of how to write a node for PeekingDuck.
+    """Uses the tracking id given by dabble.tracking node to track the number 
+    of jumps made by each object, starting from when it was first detected.
+    
+    Inputs:
+        |btm_midpoint|
+        |obj_attrs|
+    Outputs:
+        |obj_attrs|
 
-    Args:
-        config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+    Configs:
+        threshold (:obj:`int`): **default = 5**.
+            This will be used when determining if the object is traveling 
+            upwards or downwards. The number of frames object has to move in 
+            the same direction before it is detected to be travelling 
+            upwards/ downwards is given by threshold. Setting a lower threshold 
+            would make the node more sensitive to detecting jumps, and vice 
+            versa.
+            
+            To record smaller jumps, user should reduce the magnitude of 
+            threshold. To only record higher jumps, user should increase the 
+            magnitude of threshold.  
+
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.tracked_ids = {}
+        # helper dict to flip the directions when needed
         self.direction_reverse = {"up": "down",
                                   "down": "up"}
-        
-        # initialize/load any configs and models here
-        # configs can be called by self.<config_name> e.g. self.filepath
-        # self.logger.info(f"model loaded with configs: config")
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-        """This node does ___.
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]: 
+        """This node traacks the number of jumps made by each object and return 
+        this number. 
 
         Args:
-            inputs (dict): Dictionary with keys "__", "__".
+            inputs (dict): Dictionary with keys "btm_midpoint", "obj_attrs".
 
         Returns:
-            outputs (dict): Dictionary with keys "__".
+            outputs (dict): Dictionary with additional key "jumps", "directions"
+            and "heights". 
         """
         threshold = self.config["threshold"]
         ids = inputs["obj_attrs"]["ids"]
-        times = inputs["obj_attrs"]["times"]
         btm_midpoints = inputs["btm_midpoint"]
         
-        # for new object, record the initial btm midpoint as reference
+        # for new object, instntiate a dict to hold their details
         for i in range(len(btm_midpoints)):
             if ids[i] not in self.tracked_ids:
                  self.tracked_ids[ids[i]] = {"jump_count": 0, 
@@ -51,9 +66,12 @@ class Node(AbstractNode):
                 previous_heights = self.tracked_ids[ids[i]]["previous_heights"]
                 
                 previous_heights.append(curr_height)
-                    
+                
+                # if object has changed direction:
                 if self.change_direction(threshold, previous_heights, direction):
                     self.tracked_ids[ids[i]]["direction"] = self.direction_reverse[direction]
+                    # increment jump counter by 1 only when direction changes from
+                    # down to up
                     if direction == "up":
                         self.tracked_ids[ids[i]]["jump_count"] += 1
                 
@@ -64,7 +82,8 @@ class Node(AbstractNode):
             jumps_list.append(self.tracked_ids[current_id]["jump_count"])
             directions_list.append(self.tracked_ids[current_id]["direction"])
             
-            # keep only the most recent previous heights, otherwise list will become infinitely long over time
+            # keep only the most recent previous heights, otherwise list will 
+            # become infinitely long over time
             if len(self.tracked_ids[current_id]["previous_heights"]) > 3:
                 self.tracked_ids[current_id]["previous_heights"] = self.tracked_ids[current_id]["previous_heights"][-threshold:]
         
@@ -76,7 +95,26 @@ class Node(AbstractNode):
     
     
     def change_direction(self, threshold, previous_heights, direction):
-        
+        """This helper function checks if a particular object has changed its 
+        flight direction (upwards or downwards). If object's previous direction 
+        was "up" but height has been decreasing, the direction will be reversed 
+        to "down", and vice versa.
+
+        Args:
+            threshold (int): The number of frames object has to move in the same
+            direction before it is detected to be travelling upwards/ downwards.
+            
+            previous_heights (list): Previous heights recorded for the object. 
+            This is stored in chronological order, with the first element being 
+            the least recent and the last element being the most recent. Height 
+            of the object is determined from the btm_midpoint, given by the 
+            dabble node "bbox_to_btm_midpoint".
+            
+            direction (str): Most recent direction of the object. 
+
+        Returns:
+            Boolean: True if object has changed direction, else False.
+        """
         if len(previous_heights) < threshold:
             return False
         
@@ -84,8 +122,9 @@ class Node(AbstractNode):
         differences = np.diff(heights_to_consider)
         signs = [np.sign(difference) for difference in differences]
         
-        if len(set(signs)) == 1: # if all same sign, 
-            if (((signs[0]  == 1) and (direction == "up")) or  # recall that top left coord is (0,0), so a positive change is actually falling down
+        # if all heights were moving in same direction, 
+        if len(set(signs)) == 1: 
+            if (((signs[0]  == 1) and (direction == "up")) or  
                 ((signs[0] == -1) and (direction == "down"))):
                 return True
         return False

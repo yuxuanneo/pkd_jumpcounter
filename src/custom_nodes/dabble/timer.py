@@ -6,8 +6,8 @@ from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from datetime import datetime
 
 class Node(AbstractNode):
-    """Uses the tracking id given by dabble.tracking to track the time object has remained
-    in the video. Time taken is measured in seconds.
+    """Uses the tracking id given by dabble.tracking node to track the duration 
+    object has remained in the video. Time taken is measured in seconds.
 
     Inputs:
         |obj_attrs|
@@ -23,20 +23,17 @@ class Node(AbstractNode):
         self.tracked_ids = {}
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """This node does counts the time each object has remained in the video. This is done by taking the 
-        current time, then subtracting the time the object was first detected. Returns a time (in seconds)
-        for each object.
+        """This node counts the duration each object has remained in the video. 
+        This is done by taking the current time, then subtracting the time the 
+        object was first detected. Returns a time (in seconds) for each object.
 
         Args:
             inputs (dict): Dictionary with keys "ids". 
 
         Returns:
-            outputs (dict): Dictionary with keys "ids" and "times". values are lists , and the length of each
-            list corresponds to the number of objects detected in the current frame.
+            outputs (dict): Dictionary with additional key "times". 
         """
         
-        # holds the time for each id that is seen in current frame
-        times_list = []
         ids = inputs["obj_attrs"]["ids"]
         new_ids = [current_id for current_id in ids if current_id not in self.tracked_ids]
         
@@ -44,7 +41,9 @@ class Node(AbstractNode):
         if new_ids:
             for new_id in new_ids:
                 self.tracked_ids[new_id] = now
-        
+                
+        # holds the time for each id that is seen in current frame
+        times_list = []
         # calculate time taken for all nodes 
         for current_id in ids:
             times_list.append(f"timer:{int((now - self.tracked_ids[current_id]).total_seconds())}s")
