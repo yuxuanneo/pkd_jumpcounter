@@ -40,7 +40,7 @@ class Node(AbstractNode):
         
         # for new object, record the initial btm midpoint as reference
         for i in range(len(btm_midpoints)):
-            if times[i] == 0:
+            if ids[i] not in self.tracked_ids:
                  self.tracked_ids[ids[i]] = {"jump_count": 0, 
                                              "direction": "down", 
                                              "threshold": 0, 

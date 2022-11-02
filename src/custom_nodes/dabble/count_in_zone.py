@@ -3,6 +3,8 @@ Node template for creating custom nodes.
 """
 
 from typing import Any, Dict
+from collections import OrderedDict
+import re
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
@@ -16,6 +18,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.tracked_ids = {} # k=bbox id, v=zone id
 
         # initialize/load any configs and models here
         # configs can be called by self.<config_name> e.g. self.filepath
@@ -40,35 +43,36 @@ class Node(AbstractNode):
         jumps = inputs["obj_attrs"]["jumps"]
         btm_midpoints = inputs["btm_midpoint"]
         
-        bboxes_in_zone = {} # k=bbox id, v=zone id
-
-        
-        for zone_i, zone in enumerate(zones):
-            # convert zone with 4 points to a zone bbox with (x1, y1), (x2, y2)
-            x1, y1 = zone[0]
-            x2, y2 = zone[2]
-
-            # this follows the method of dabble.zone_count, where we only consider the btm midpt of bboxes
-            for btm_midpoint_i, btm_midpoint in enumerate(btm_midpoints):
+        for i, id in enumerate(ids):
+            if id not in self.tracked_ids:
+                btm_midpoint = btm_midpoints[i] # midpt of the bbox associated with id
                 x, y = btm_midpoint
                 
-                if (x1 < x) and (x < x2) and (y1 < y) and(y < y2): 
-                    obj_id = ids[btm_midpoint_i]
-                    bboxes_in_zone[obj_id] = zone_i
-        
+                for zone_i, zone in enumerate(zones):
+                    # convert zone with 4 points to a zone bbox with (x1, y1), (x2, y2)
+                    x1, y1 = zone[0]
+                    x2, y2 = zone[2]
+                    if (x1 < x) and (x < x2) and (y1 < y) and(y < y2):
+                        self.tracked_ids[id] = zone_i
+                    
         zones_list = []
         
         zone_counts_people = {} # k = zone id, v = people count in zone
         zone_counts_jump = {} # k = zone id, v = jump count in zone
         for i, id in enumerate(ids):
-            zone_id = bboxes_in_zone.get(id, "not in zone")
-            zones_list.append(zone_id)
+            zone_id = self.tracked_ids.get(id, "not in zone")
+            zones_list.append(f"zone:{zone_id}")
             zone_counts_people[zone_id] = zone_counts_people.get(zone_id, 0) + 1
             zone_counts_jump[zone_id] = zone_counts_jump.get(zone_id, 0) + jumps[i]
         
         inputs["obj_attrs"]["zones"] = zones_list
         
+        zone_counts_people = dict(sorted(zone_counts_people.items(), key=lambda x: str(x)))
+        zone_counts_jump = dict(sorted(zone_counts_jump.items(), key=lambda x: str(x)))
+        inputs["obj_attrs"]["jumps"] = [f"count:{count}" for count in jumps]
+
+
         return {"obj_attrs": inputs["obj_attrs"], 
-                "zone_count_people": zone_counts_people, 
-                "zone_counts_jump": zone_counts_jump}
+                "zone_count_people": str(zone_counts_people), 
+                "zone_count_jump": str(zone_counts_jump)}
             
