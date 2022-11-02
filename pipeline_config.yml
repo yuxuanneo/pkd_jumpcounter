@@ -26,5 +26,5 @@ nodes:
 - draw.tag:
     show: ["ids", "times", "jumps", "directions"]
 - draw.legend:
-    show: ["fps", "cum_max", "cum_min", "cum_avg", "zone_count"]
+    show: ["fps", "cum_max", "cum_min", "cum_avg", "zone_count_people", "zone_counts_jump"]
 - output.screen

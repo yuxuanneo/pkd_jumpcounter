@@ -37,6 +37,7 @@ class Node(AbstractNode):
         zones = inputs["zones"]
         bboxes = inputs["bboxes"]
         ids = inputs["obj_attrs"]["ids"]
+        jumps = inputs["obj_attrs"]["jumps"]
         btm_midpoints = inputs["btm_midpoint"]
         
         bboxes_in_zone = {} # k=bbox id, v=zone id
@@ -46,21 +47,28 @@ class Node(AbstractNode):
             # convert zone with 4 points to a zone bbox with (x1, y1), (x2, y2)
             x1, y1 = zone[0]
             x2, y2 = zone[2]
-            zone_bbox = np.asarray([x1, y1, x2, y2])
 
             # this follows the method of dabble.zone_count, where we only consider the btm midpt of bboxes
             for btm_midpoint_i, btm_midpoint in enumerate(btm_midpoints):
                 x, y = btm_midpoint
                 
                 if (x1 < x) and (x < x2) and (y1 < y) and(y < y2): 
-                    obj_id = ids[bbox_i]
+                    obj_id = ids[btm_midpoint_i]
                     bboxes_in_zone[obj_id] = zone_i
         
         zones_list = []
-        for id in ids:
-            zones_list.append(bboxes_in_zone.get(id, "not in zone"))
-            
+        
+        zone_counts_people = {} # k = zone id, v = people count in zone
+        zone_counts_jump = {} # k = zone id, v = jump count in zone
+        for i, id in enumerate(ids):
+            zone_id = bboxes_in_zone.get(id, "not in zone")
+            zones_list.append(zone_id)
+            zone_counts_people[zone_id] = zone_counts_people.get(zone_id, 0) + 1
+            zone_counts_jump[zone_id] = zone_counts_jump.get(zone_id, 0) + jumps[i]
+        
         inputs["obj_attrs"]["zones"] = zones_list
         
-        return inputs["obj_attrs"]
+        return {"obj_attrs": inputs["obj_attrs"], 
+                "zone_count_people": zone_counts_people, 
+                "zone_counts_jump": zone_counts_jump}
             
