@@ -15,7 +15,6 @@ nodes:
 - custom_nodes.dabble.timer
 - custom_nodes.dabble.jump:
     threshold: 5
-- custom_nodes.dabble.debug
 - dabble.statistics:
     maximum: obj_attrs["ids"]
 - custom_nodes.dabble.count_in_zone
