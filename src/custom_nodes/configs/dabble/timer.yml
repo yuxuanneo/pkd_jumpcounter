@@ -1,5 +1,6 @@
+# Mandatory configs
 input: ["obj_attrs"]
 
 output: ["obj_attrs"]
 
-
+# No optional configs

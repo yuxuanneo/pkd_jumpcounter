@@ -1,51 +1,44 @@
-"""
-Node template for creating custom nodes.
-"""
+"""Counts the total number of jumps made by objects within a zone"""
 
 from typing import Any, Dict
-from collections import OrderedDict
-import re
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
-
 class Node(AbstractNode):
-    """This is a template class of how to write a node for PeekingDuck.
-
-    Args:
-        config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+    """Uses the bottom midpoints of all detected bounding boxes and outputs the
+    number of jumps recorded by all objects in each specified zone.
+    
+    Object is considered in a particular zone if the bottom midpoint of its bbox
+    falls within that zone. 
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.tracked_ids = {} # k=bbox id, v=zone id
 
-        # initialize/load any configs and models here
-        # configs can be called by self.<config_name> e.g. self.filepath
-        # self.logger.info(f"model loaded with configs: config")
-
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-        """This node does ___.
+        """This node does the allocation of detected object into each zone from 
+        the zones defined earlier in the dabble.zone_count node. Then, sum up the 
+        number of jumps recorded for each zone.
 
         Args:
-            inputs (dict): Dictionary with keys "__", "__".
+            inputs (dict): Dictionary with keys "zones", "obj_attrs", 
+            "btm_midpoint".
 
         Returns:
-            outputs (dict): Dictionary with keys "__".
+            outputs (dict): Dictionary with keys "obj_attrs", "zone_count_people", 
+            "zone_count_jump".
         """
-
-        # result = do_something(inputs["in1"], inputs["in2"])
-        # outputs = {"out1": result}
-        # return outputs
+        
         zones = inputs["zones"]
-        bboxes = inputs["bboxes"]
         ids = inputs["obj_attrs"]["ids"]
         jumps = inputs["obj_attrs"]["jumps"]
         btm_midpoints = inputs["btm_midpoint"]
         
         for i, id in enumerate(ids):
             if id not in self.tracked_ids:
-                btm_midpoint = btm_midpoints[i] # midpt of the bbox associated with id
+                # btm midpt of the bbox associated with id
+                btm_midpoint = btm_midpoints[i] 
                 x, y = btm_midpoint
                 
                 for zone_i, zone in enumerate(zones):
@@ -59,6 +52,9 @@ class Node(AbstractNode):
         
         zone_counts_people = {} # k = zone id, v = people count in zone
         zone_counts_jump = {} # k = zone id, v = jump count in zone
+        
+        # iterate through detected ids in this frame and sum the number of jumps
+        # in each zone. also get the total no. of people in each zone.
         for i, id in enumerate(ids):
             zone_id = self.tracked_ids.get(id, "not in zone")
             zones_list.append(f"zone:{zone_id}")

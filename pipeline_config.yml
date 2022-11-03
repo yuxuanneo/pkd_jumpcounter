@@ -25,4 +25,5 @@ nodes:
     show: ["times", "jumps", "zones"] # can get direction if you want
 - draw.legend:
     show: ["fps", "zone_count_people", "zone_count_jump"]
-- output.screen
+- output.media_writer:
+    output_dir: "output"

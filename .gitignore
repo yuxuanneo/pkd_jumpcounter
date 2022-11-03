@@ -7,6 +7,9 @@
 # Ignore .jpg images
 *.jpg
 
+# Ignore .pptx files
+*.pptx
+
 # except those in output
 !src/mmaction2/outputs/*.jpg
 
