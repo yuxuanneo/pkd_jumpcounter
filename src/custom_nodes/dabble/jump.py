@@ -53,8 +53,8 @@ class Node(AbstractNode):
         ids = inputs["obj_attrs"]["ids"]
         btm_midpoints = inputs["btm_midpoint"]
         
-        # for new object, instntiate a dict to hold their details
         for i in range(len(btm_midpoints)):
+            # for new object, instntiate a dict to hold their details
             if ids[i] not in self.tracked_ids:
                  self.tracked_ids[ids[i]] = {"jump_count": 0, 
                                              "direction": "down", 
@@ -84,7 +84,7 @@ class Node(AbstractNode):
             
             # keep only the most recent previous heights, otherwise list will 
             # become infinitely long over time
-            if len(self.tracked_ids[current_id]["previous_heights"]) > 3:
+            if len(self.tracked_ids[current_id]["previous_heights"]) > threshold:
                 self.tracked_ids[current_id]["previous_heights"] = self.tracked_ids[current_id]["previous_heights"][-threshold:]
         
         inputs["obj_attrs"]["jumps"] = jumps_list
@@ -94,7 +94,7 @@ class Node(AbstractNode):
         return inputs["obj_attrs"]
     
     
-    def change_direction(self, threshold, previous_heights, direction):
+    def change_direction(self, threshold: int, previous_heights: 'list[float]', direction: str) -> bool:
         """This helper function checks if a particular object has changed its 
         flight direction (upwards or downwards). If object's previous direction 
         was "up" but height has been decreasing, the direction will be reversed 
@@ -113,7 +113,7 @@ class Node(AbstractNode):
             direction (str): Most recent direction of the object. 
 
         Returns:
-            Boolean: True if object has changed direction, else False.
+            Boolean: True if object has changed direction, False otherwise.
         """
         if len(previous_heights) < threshold:
             return False

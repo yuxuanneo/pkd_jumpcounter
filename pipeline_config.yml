@@ -10,19 +10,16 @@ nodes:
       [[0, 0], [0.6, 0], [0.6, 1], [0, 1]], 
       [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
     ]
-
 - dabble.tracking
 - custom_nodes.dabble.timer
 - custom_nodes.dabble.jump:
     threshold: 5
-- dabble.statistics:
-    maximum: obj_attrs["ids"]
 - custom_nodes.dabble.count_in_zone
 - dabble.fps
 - draw.bbox
 - draw.zones
 - draw.tag:
-    show: ["times", "jumps", "zones", "directions", "heights"] 
+    show: ["jumps", "zones"] 
 - draw.legend:
     show: ["fps", "zone_count_people", "zone_count_jump"]
 - output.media_writer:

@@ -36,6 +36,7 @@ class Node(AbstractNode):
         btm_midpoints = inputs["btm_midpoint"]
         
         for i, id in enumerate(ids):
+            # only allocate object to zone if it hasnt already been done
             if id not in self.tracked_ids:
                 # btm midpt of the bbox associated with id
                 btm_midpoint = btm_midpoints[i] 
@@ -54,7 +55,8 @@ class Node(AbstractNode):
         zone_counts_jump = {} # k = zone id, v = jump count in zone
         
         # iterate through detected ids in this frame and sum the number of jumps
-        # in each zone. also get the total no. of people in each zone.
+        # in each zone. Also get the total no. of objects in each zone.
+        # if object not found in zone, allocate it to 'not in zone'
         for i, id in enumerate(ids):
             zone_id = self.tracked_ids.get(id, "not in zone")
             zones_list.append(f"zone:{zone_id}")
@@ -63,6 +65,7 @@ class Node(AbstractNode):
         
         inputs["obj_attrs"]["zones"] = zones_list
         
+        # sorts order of zone_counts so that its always in alphabetical order
         zone_counts_people = dict(sorted(zone_counts_people.items(), key=lambda x: str(x)))
         zone_counts_jump = dict(sorted(zone_counts_jump.items(), key=lambda x: str(x)))
         inputs["obj_attrs"]["jumps"] = [f"count:{count}" for count in jumps]

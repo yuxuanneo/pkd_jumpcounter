@@ -19,7 +19,6 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         
-        # key=tracking_id and value=time started tracking
         self.tracked_ids = {}
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

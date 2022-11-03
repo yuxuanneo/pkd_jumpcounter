@@ -3,15 +3,14 @@
 
 # ignore videos
 *.mp4
+# except those in output
+# !output/*.mp4
 
 # Ignore .jpg images
 *.jpg
 
 # Ignore .pptx files
 *.pptx
-
-# except those in output
-!src/mmaction2/outputs/*.jpg
 
 # Ignore .ipynb files
 *.ipynb
