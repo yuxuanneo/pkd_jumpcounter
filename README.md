@@ -59,3 +59,11 @@ We note that the dabble.jump might have too low a threshold and as a result, are
 2. Occluded objects may not be properly tracked- objects are tracked based on IoU, which makes it harder to trace the bounding boxes of each object if there are many overlapping bounding boxes. 
 
 A solution would be to train an action detector model instead, such as the [SlowOnly network](https://openaccess.thecvf.com/content_ICCV_2019/html/Feichtenhofer_SlowFast_Networks_for_Video_Recognition_ICCV_2019_paper.html), which uses both spatial semantics and temporal information to classify action of objects. Then, use such a model to predict tuck jumps, instead of the current rule-based approach. 
+
+## Optional Configs
+On top of the 3 elements (time, jump count and zone) that are displayed for each object, user can also edit the config file to include the direction of the jump and the height of the object (recorded using bottom mid point of bounding box). To do so, edit [pipeline_config.yml](pipeline_config.yml)
+```
+- draw.tag:
+    show: ["times", "jumps", "zones", "directions", "heights"]
+```
+Similarly, to reduce the clutter on the screen, user can remove keys that do not want to be displayed. 
