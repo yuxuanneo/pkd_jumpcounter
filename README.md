@@ -43,7 +43,7 @@ dabble.count_in_zone | Counts the total number of jumps made by objects within a
 
 <br>
 
-<img src="viewer/demo_image.png" alt="drawing" width="600"/>
+<img src="viewer/demo_image.png" alt="drawing" width="800"/>
 
 This is a screenshot taken from the output of the inference pipeline. The image has been annotated to give more information on how the legend at the bottom left corner should be interpreted. Additionally, the 2 elements presented for each object are (1) total number of jumps recorded for object and (2) the zone the object is assigned to. 
 
