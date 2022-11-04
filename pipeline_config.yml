@@ -22,5 +22,4 @@ nodes:
     show: ["jumps", "zones"] 
 - draw.legend:
     show: ["fps", "zone_count_people", "zone_count_jump"]
-- output.media_writer:
-    output_dir: "output"
+- output.screen

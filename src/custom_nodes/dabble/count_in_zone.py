@@ -10,8 +10,19 @@ class Node(AbstractNode):
     
     Object is considered in a particular zone if the bottom midpoint of its bbox
     falls within that zone. 
-    """
+    
+    Inputs:
+        |zones|
+        |obj_attrs|
+        |btm_midpoint|
 
+    Outputs:
+        |obj_attrs|
+        |zone_count_people|
+        |zone_count_jump|
+
+    """
+    
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.tracked_ids = {} # k=bbox id, v=zone id

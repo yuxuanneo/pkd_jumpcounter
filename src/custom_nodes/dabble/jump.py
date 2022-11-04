@@ -39,7 +39,7 @@ class Node(AbstractNode):
                                   "down": "up"}
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]: 
-        """This node traacks the number of jumps made by each object and return 
+        """This node tracks the number of jumps made by each object and return 
         this number. 
 
         Args:

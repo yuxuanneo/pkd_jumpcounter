@@ -1,4 +1,4 @@
-# pkd demo
+# Tuck Jump Counter Implemented through PeekingDuck
 
 # Introduction
 To implement a gamified exercise inference pipeline, which counts the number of tuck jumps completed by individuals within the video feed. Scores can also be aggregated by "zones" that are pre-determined by users, which could introduce some level of team competitiveness into the game. At the very least, the pipeline should still serve as a regular jump counter for a fitness enthusiast, using an easy to set up script. 
@@ -50,6 +50,13 @@ This is a screenshot taken from the output of the inference pipeline. The image 
 <br>
 
 # Demo
+
+Run the pipeline using the following command:
+```
+peekingduck run
+```
+The default config file should return the following output (config file can be further customised to fit user's use case. More details can be found in the next section of the README): 
+
 <img src="viewer/output_demo.gif" alt="drawing" width="500"/>
 
 [full output](https://drive.google.com/file/d/1w1CqgR0pEacb6VjU9UuQ75_lGL_3D1u8/view?usp=share_link)
@@ -59,14 +66,14 @@ This example also illustrates the importance of the threshold value in **dabble.
 # Optional Configs
 
 ## Labels shown on object
-On top of the 3 elements (time, jump count and zone) that are displayed for each object, user can also edit the config file to include the direction of the jump and the height of the object (recorded using bottom mid point of bounding box). To do so, edit the following lines on [pipeline_config.yml](pipeline_config.yml)
+On top of the 2 elements (jump count and zone) that are displayed for each object, user can also edit the config file to include the time object has been on screen for, direction of the jump and the height of the object (recorded using bottom mid point of bounding box). To do so, edit the following lines on [pipeline_config.yml](pipeline_config.yml)
 ```
 - draw.tag:
     show: ["times", "jumps", "zones", "directions", "heights"]
 ```
 Similarly, to reduce the clutter on the screen, user can remove keys that they do not want displayed. 
 
-Note that the times key work best if the video source is running live from the webcam. Otherwise, the time recorded depends on how fast the video is processed and may lead to inaccuracte times. 
+Note that the times key works best if the video source is running live from the webcam. Otherwise, the time recorded depends on how fast the video is processed and may lead to inaccuracte times. 
 
 ## Custom video source
 Additionally, to run the inference pipeline on a custom video source or even through the webcam of the device, edit the following lines 
@@ -74,13 +81,14 @@ Additionally, to run the inference pipeline on a custom video source or even thr
 - input.visual:
     source: 'link/to/vid.mp4' OR 0 # 0 gives the webcam live feed
 ```
-More informaation can be found [here](https://peekingduck.readthedocs.io/en/stable/nodes/input.visual.html).
+More information can be found [here](https://peekingduck.readthedocs.io/en/stable/nodes/input.visual.html).
 
-Hint: remember to also change the resolution config for the **dabble.zone_count** node to correspond to the new video's resolution. Zones config can also be toggled to fit user's preference. More informaation can be found [here](https://peekingduck.readthedocs.io/en/stable/nodes/dabble.zone_count.html#module-dabble.zone_count).
+Hint: remember to also change the resolution config for the **dabble.zone_count** node to correspond to the new video's resolution. Zones config can also be toggled to fit user's preference. More information can be found [here](https://peekingduck.readthedocs.io/en/stable/nodes/dabble.zone_count.html#module-dabble.zone_count).
 
 # Possible Use Cases
-- Mass exercising sessions (such as during army training), where there are many participants and limited supervisors. This inference pipeline would make it easy to count if all participants have finished the required set of exercises.
+- Mass exercise sessions (such as during army training), where there are many participants and limited supervisors. This inference pipeline would make it easy to count if all participants have finished the required set of exercises.
 - Mass games (such as games played in school camps), where participants are split into groups to compete with one another. 
+- While the inference pipeline was initially written to track tuck jumps specifically, it should also be versatile enough to track other kinds of jumps, as long as objects are producing sufficient vertical travel. 
 
 # Limitations and Future Work
 1. Camera angle is important- due to the nature the jumps are tracked (since we are tracking by vertical distance), the camera must be placed such that it is viewing the human objects from the front. If the camera was top-down instead, the change in vertical height captured would be much smaller and the tuck jumps may not be properly detected. 
