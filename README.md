@@ -43,7 +43,7 @@ dabble.count_in_zone | Counts the total number of jumps made by objects within a
 
 <br>
 
-<img src="viewer/demo_image.png" alt="drawing" width="300"/>
+<img src="viewer/demo_image.png" alt="drawing" width="600"/>
 
 This is a screenshot taken from the output of the inference pipeline. The image has been annotated to give more information on how the legend at the bottom left corner should be interpreted. Additionally, the 2 elements presented for each object are (1) total number of jumps recorded for object and (2) the zone the object is assigned to. 
 
@@ -57,7 +57,7 @@ peekingduck run
 ```
 The default config file should return the following output (config file can be further customised to fit user's use case. More details can be found in the next section of the README): 
 
-<img src="viewer/output_demo.gif" alt="drawing" width="500"/>
+<img src="viewer/output_demo.gif" alt="drawing" width="600"/>
 
 [full output](https://drive.google.com/file/d/1w1CqgR0pEacb6VjU9UuQ75_lGL_3D1u8/view?usp=share_link)
 
