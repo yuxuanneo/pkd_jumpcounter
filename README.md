@@ -29,7 +29,7 @@ dabble.count_in_zone | Counts the total number of jumps made by objects within a
 
 2. Second, the **dabble.tracking** node tracks bounding boxes detected by the YOLOV4 model, using the [IoU tracking algorithm](http://elvera.nue.tu-berlin.de/files/1517Bochinski2017.pdf). Essentially, the IOU tracker associates the current detection with the highest IoU to the last detection in the previous frame. In other words, detections with close proximity to each other in between frames are assumed to be of the same object, and the particular object will be tracked this way. 
 
-3. Third, the custom **dabble.timer** node would track how long (in seconds) since the object was first detected. This is measured by using the time at the current frame, subtracted by the time the object was first detected. 
+3. Third, the custom **dabble.timer** node would track how long it has been (in seconds) since the object was first detected. This is measured by using the time at the current frame, subtracted by the time the object was first detected. 
 
 4. Fourth, the custom **dabble.jump** node would track the number of tuck jumps made by the object, which is a cumulative count since the object was first tracked. A jump is deteced through a helper function which checks if the object has changed directions (upwards or downwards). 
 
