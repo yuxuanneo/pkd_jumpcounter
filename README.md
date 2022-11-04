@@ -1,7 +1,7 @@
 # Tuck Jump Counter Implemented through PeekingDuck
 
 # Introduction
-To implement a gamified exercise inference pipeline, which counts the number of tuck jumps completed by individuals within the video feed. Scores can also be aggregated by "zones" that are pre-determined by users, which could introduce some level of team competitiveness into the game. At the very least, the pipeline should still serve as a regular jump counter for a fitness enthusiast, using an easy to set up script. 
+To implement a gamified exercise inference pipeline, which counts the number of tuck jumps completed by individuals within the video feed. Scores can also be aggregated by "zones" that are pre-determined by users, which could introduce some level of team competitiveness into the game. At the very least, the pipeline can serve as a regular jump counter for a fitness enthusiast, using an easy to set up script. 
 
 <img src="viewer/tuck_jump.gif" alt="drawing" width="300"/>
 
