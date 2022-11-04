@@ -31,7 +31,7 @@ dabble.count_in_zone | Counts the total number of jumps made by objects within a
 
 3. Third, the custom **dabble.timer** node would track how long it has been (in seconds) since the object was first detected. This is measured by using the time at the current frame, subtracted by the time the object was first detected. 
 
-4. Fourth, the custom **dabble.jump** node would track the number of tuck jumps made by the object, which is a cumulative count since the object was first tracked. A jump is deteced through a helper function which checks if the object has changed directions (upwards or downwards). 
+4. Fourth, the custom **dabble.jump** node would track the number of tuck jumps made by the object, which is a cumulative count since the object was first detected. A jump is deteced through a helper function which checks if the object has changed directions (upwards or downwards). 
 
     More specifically, the jump node would store information of the heights of the bounding box of each object for each frame. Then, the helper function looks through the past heights to infer if the object is currently moving upwards or downwards. Height is recorded using the height of the bottom mid point of the bounding box predicted. 
 
